@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module MonadTransformers where
@@ -47,7 +48,7 @@ instance (Monad m) => Monad (IdentityT m) where
 
 
 
-newtype MyRealApp a = MyRealApp { unMyRealApp' :: ReaderT String IO a }
+newtype MyRealApp a = MyRealApp { unMyRealApp :: ReaderT String IO a }
   deriving (Functor, Applicative, Monad, MonadIO, MonadReader String)
 
 
@@ -57,16 +58,20 @@ newtype MySimpleApp a = MySimpleApp { unMySimpleApp :: IO a }
 
 
 myMain :: IO ()
-myMain =
+myMain = runReaderT (unMyRealApp mainLogic) "db conn string"
 
 
 mainLogic :: MyRealApp ()
 mainLogic = do
   stuff <- doThingOne
-  things <- doThingTwo
+  things <- doThingTwo stuff
   pure ()
 
+doThingOne :: MonadReader String m => m Int
+doThingOne = undefined
 
+doThingTwo :: Monad m => Int -> m String
+doThingTwo = undefined
 
 
 
