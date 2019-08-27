@@ -47,14 +47,13 @@ instance (Monad m) => Monad (IdentityT m) where
 
 
 
+newtype MySimpleApp a = MySimpleApp { unMySimpleApp :: IO a }
+  deriving (Functor, Applicative, Monad, MonadIO)
+
 
 newtype MyRealApp a = MyRealApp { unMyRealApp :: ReaderT String IO a }
   deriving (Functor, Applicative, Monad, MonadIO, MonadReader String)
 
-
-
-newtype MySimpleApp a = MySimpleApp { unMySimpleApp :: IO a }
-  deriving (Functor, Applicative, Monad, MonadIO)
 
 
 myMain :: IO ()
